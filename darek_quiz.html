@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darek's Grammar Quiz · 36 Questions</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --cream: #f5f0e8;
+    --gold: #c8952a;
+    --gold-light: #e8c96a;
+    --card: #fffdf7;
+    --border: #d4c9b0;
+    --correct: #3d7a46;
+    --wrong: #b83228;
+    --shadow: rgba(26,18,8,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(200,149,42,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(90,122,94,0.07) 0%, transparent 60%);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .page-wrap { max-width: 620px; width: 100%; }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.2rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .label-top {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .divider {
+    width: 50px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0.9rem auto 0;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 1.6rem;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #7a6a50;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Dots */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.32rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s, transform 0.2s;
+  }
+  .dot.current { background: var(--gold); transform: scale(1.4); }
+  .dot.done-skipped { background: #b0a08a; }
+  .dot.done-correct { background: var(--correct); }
+  .dot.done-wrong { background: var(--wrong); }
+
+  /* Card */
+  #card-wrap { perspective: 800px; }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2.2rem 2.4rem 1.9rem;
+    box-shadow: 0 4px 28px var(--shadow);
+    position: relative;
+    overflow: hidden;
+    animation: slideInRight 0.35s ease both;
+  }
+
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), transparent);
+  }
+
+  .category-badge {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--cream);
+    font-size: 0.63rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.26rem 0.7rem;
+    border-radius: 2px;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+  }
+
+  .q-number {
+    font-size: 0.7rem;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.45rem;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .q-text {
+    font-size: 1.06rem;
+    line-height: 1.9;
+    font-weight: 400;
+    margin-bottom: 1.3rem;
+  }
+
+  .gap input {
+    border: none;
+    border-bottom: 2px solid var(--gold);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    padding: 0 4px 2px;
+    min-width: 90px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .gap input:focus {
+    border-bottom-color: var(--ink);
+    background: rgba(200,149,42,0.06);
+  }
+
+  .gap input.correct {
+    border-bottom-color: var(--correct);
+    color: var(--correct);
+    background: rgba(61,122,70,0.07);
+  }
+
+  .gap input.wrong {
+    border-bottom-color: var(--wrong);
+    color: var(--wrong);
+    background: rgba(184,50,40,0.07);
+  }
+
+  .gap input:disabled { cursor: default; }
+
+  .hint-wrap { margin-bottom: 1rem; }
+
+  .btn-hint {
+    background: none;
+    border: 1px dashed var(--gold);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.85rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-bottom: 0.5rem;
+    display: none;
+  }
+  .btn-hint:hover { background: rgba(200,149,42,0.1); }
+  .btn-hint.visible { display: inline-block; }
+
+  .q-hint {
+    font-size: 0.8rem;
+    color: #7a6a50;
+    font-style: italic;
+    padding: 0.45rem 0.8rem;
+    border-left: 2px solid var(--gold-light);
+    background: rgba(200,149,42,0.06);
+    border-radius: 0 2px 2px 0;
+    display: none;
+    animation: fadeUp 0.2s ease both;
+  }
+  .q-hint.show { display: block; }
+
+  .feedback {
+    font-size: 0.84rem;
+    padding: 0.8rem 1rem;
+    border-radius: 3px;
+    line-height: 1.55;
+    margin-bottom: 1.3rem;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb {
+    background: rgba(61,122,70,0.09);
+    color: var(--correct);
+    border-left: 3px solid var(--correct);
+  }
+  .feedback.wrong-fb {
+    background: rgba(184,50,40,0.08);
+    color: var(--wrong);
+    border-left: 3px solid var(--wrong);
+  }
+
+  .btn-row { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.62rem 1.4rem;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .btn-check { background: var(--ink); color: var(--cream); }
+  .btn-check:hover { background: var(--gold); color: var(--ink); }
+  .btn-check:active { transform: scale(0.97); }
+  .btn-check:disabled { opacity: 0.3; cursor: default; background: var(--ink); color: var(--cream); }
+
+  .btn-next { background: var(--gold); color: var(--ink); display: none; }
+  .btn-next:hover { background: var(--gold-light); }
+  .btn-next.show { display: inline-block; }
+
+  /* Score */
+  #score-screen {
+    display: none;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3.5rem 2rem;
+    box-shadow: 0 4px 30px var(--shadow);
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .score-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+
+  .score-number sub {
+    font-size: 1.8rem;
+    color: var(--gold);
+    font-weight: 700;
+    vertical-align: baseline;
+  }
+
+  .score-msg {
+    font-size: 0.95rem;
+    color: #5a4e38;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .btn-retry {
+    border: 2px solid var(--ink);
+    background: none;
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.65rem 2rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.18s;
+  }
+  .btn-retry:hover { background: var(--ink); color: var(--cream); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(36px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideOutLeft {
+    to { opacity: 0; transform: translateX(-36px); }
+  }
+
+  .slide-out { animation: slideOutLeft 0.28s ease forwards; }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 1.6rem 1.3rem 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <div class="label-top">B2 English · Grammar Quiz</div>
+    <h1>Hello, <span>Darek</span>.</h1>
+    <div class="divider"></div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-label">Question 1 of 18</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div id="card-wrap">
+    <div class="question-card" id="q-card">
+      <div class="card-accent"></div>
+      <div class="category-badge" id="q-cat"></div>
+      <div class="q-number" id="q-num"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="hint-wrap" id="hint-wrap">
+        <button class="btn-hint" id="btn-hint" onclick="toggleHint()">💡 Show hint</button>
+        <div class="q-hint" id="q-hint"></div>
+      </div>
+      <div class="feedback" id="q-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-check" id="btn-check" onclick="checkAnswer()">Check</button>
+        <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">Skip →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="score-screen">
+    <div class="score-label">Final Score</div>
+    <div class="score-number" id="score-num"></div>
+    <div class="score-msg" id="score-msg"></div>
+    <button class="btn-retry" onclick="resetQuiz()">Try Again</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  // AS / LIKE
+  { cat: "As / Like", parts: ["She sings ", {a:"like",s:6}, " an angel — it's unbelievable."], hint: "Use <em>like</em> or <em>as</em> — which one goes before a noun to make a comparison?", exp: "<strong>Like</strong> is used before a noun/pronoun for comparison." },
+  { cat: "As / Like", parts: ["He worked ", {a:"as",s:4}, " a translator for five years before switching careers."], hint: "Is this a comparison or a description of his job/role? Choose <em>like</em> or <em>as</em>.", exp: "<strong>As</strong> describes a role, job, or function." },
+  { cat: "As / Like", parts: ["It looks ", {a:"as if",s:8}, " it's going to rain — the sky is very dark."], hint: "What follows the gap — a noun, or a full clause with a subject and verb? You may use <em>as if</em> or <em>as though</em>.", exp: "<strong>As if</strong> (or <em>as though</em>) introduces a clause about how something appears. Both are accepted!" },
+  { cat: "As / Like", parts: ["The new intern works ", {a:"like",s:6}, " a professional — she's incredibly impressive."], hint: "A noun phrase follows the gap. Which word makes a comparison before a noun — <em>as</em> or <em>like</em>?", exp: "<strong>Like</strong> (not <em>as</em>) is used for comparisons before nouns/pronouns." },
+  { cat: "As / Like", parts: ["She behaved ", {a:"as if",s:8}, " she had never met him before, which was very strange."], hint: "A full clause (subject + verb) follows. Which two-word phrase introduces such a clause? (<em>as if</em> or <em>as though</em> are both fine!)", exp: "<strong>As if</strong> introduces a clause (subject + verb), not a bare noun. <em>As though</em> is also correct." },
+  { cat: "As / Like", parts: ["He used the umbrella ", {a:"as",s:4}, " a walking stick when he hurt his leg."], hint: "Is this describing what the umbrella actually <em>is</em>, or comparing it to something? Think about function vs. similarity.", exp: "<strong>As</strong> shows the function or purpose something is being used for." },
+  { cat: "As / Like", parts: ["This coffee tastes ", {a:"like",s:6}, " dishwater — did you actually brew it properly?"], hint: "A sense verb (<em>tastes</em>) is followed by a noun. Which word makes that kind of comparison?", exp: "<strong>Like</strong> is used before a noun for comparison, especially with sense verbs." },
+  { cat: "As / Like", parts: ["She was elected ", {a:"as",s:4}, " chairperson of the committee last spring."], hint: "Chairperson is her official position, not something she is being compared to. Which word describes a role?", exp: "<strong>As</strong> describes an official role or position someone holds." },
+
+  // FIRST CONDITIONAL
+  { cat: "First Conditional", parts: ["If you ", {a:"study",s:6}, " hard, you will pass the exam without any problems."], hint: "This is an <em>if</em>-clause. Which tense do we use after <em>if</em> in a first conditional?", exp: "In the <strong>first conditional</strong>, use present simple after <em>if</em>." },
+  { cat: "First Conditional", parts: ["She ", {a:"will call",s:9}, " you as soon as she arrives at the hotel tonight."], hint: "This is the result/main clause of a first conditional. Which modal + verb form goes here?", exp: "The result clause uses <em>will + infinitive</em>." },
+  { cat: "First Conditional", parts: ["Unless it ", {a:"stops",s:6}, " raining, the match will be postponed until tomorrow."], hint: "<em>Unless</em> works like <em>if not</em>. Which tense follows it in a conditional sentence?", exp: "<strong>Unless</strong> means <em>if not</em> — followed by present simple." },
+  { cat: "First Conditional", parts: ["If we ", {a:"don't leave",s:10}, " now, we will definitely miss the last train home."], hint: "The result is negative — we'll miss the train. The <em>if</em>-clause should also be negative. Think: <em>don't</em> or <em>doesn't</em> + infinitive.", exp: "Negative first conditional: <em>don't/doesn't</em> + infinitive after <em>if</em>." },
+  { cat: "First Conditional", parts: ["If you ", {a:"are",s:4}, " late again, the boss will have a serious word with you."], hint: "The subject is <em>you</em>. Which present simple form of <em>to be</em> matches?", exp: "Any present tense form, including <em>to be</em>, can follow <em>if</em> in the first conditional." },
+  { cat: "First Conditional", parts: ["I ", {a:"will help",s:9}, " you move the furniture if you need an extra pair of hands."], hint: "The <em>if</em>-clause is at the end here. The gap is in the main/result clause — which form goes there?", exp: "The main clause uses <em>will + infinitive</em> to show the likely result." },
+  { cat: "First Conditional", parts: ["If he ", {a:"doesn't apologise",s:16}, ", I won't forgive him for what he said."], hint: "The subject is <em>he</em> (third person singular) and the meaning is negative. Which contracted negative auxiliary fits?", exp: "Negative first conditional with third-person singular uses <em>doesn't</em> + infinitive." },
+
+  // PRESENT CONTINUOUS
+  { cat: "Present Continuous", parts: ["They ", {a:"are building",s:12}, " a new shopping centre near the river at the moment."], hint: "<em>At the moment</em> tells you the action is happening right now. Which tense uses <em>am/is/are + -ing</em>?", exp: "<strong>Present continuous</strong> (am/is/are + -ing) describes an action happening around now." },
+  { cat: "Present Continuous", parts: ["I ", {a:"am meeting",s:10}, " my manager tomorrow — it's already in the diary."], hint: "This is a fixed, arranged future plan. Which tense do we use for confirmed arrangements?", exp: "<strong>Present continuous</strong> can describe a fixed future arrangement." },
+  { cat: "Present Continuous", parts: ["Why ", {a:"are you wearing",s:14}, " a coat indoors? It's warm in here!"], hint: "This is a question about something happening right now. The subject is <em>you</em> — form the question with <em>are</em> + subject + verb-ing.", exp: "<strong>Present continuous</strong> asks about an action happening at this moment." },
+  { cat: "Present Continuous", parts: ["She ", {a:"is getting",s:10}, " better and better at chess — she beats me every time now."], hint: "<em>Better and better</em> signals a gradual change. The subject is <em>she</em> — which auxiliary + verb-ing fits?", exp: "<strong>Present continuous</strong> with a gradual change: <em>is/are + verb-ing</em>." },
+  { cat: "Present Continuous", parts: ["We ", {a:"are travelling",s:13}, " to Berlin next Friday — the tickets are already booked."], hint: "Booked tickets = confirmed plan. The subject is <em>we</em>. Which tense and form expresses a future arrangement?", exp: "<strong>Present continuous</strong> for a confirmed future plan or arrangement." },
+
+  // PRESENT SIMPLE
+  { cat: "Present Simple", parts: ["Water ", {a:"boils",s:6}, " at 100°C at sea level — it's a basic scientific fact."], hint: "This is a scientific fact that is always true. Which tense do we use? Remember the subject is <em>water</em> (third person singular).", exp: "<strong>Present simple</strong> is used for permanent facts and universal truths." },
+  { cat: "Present Simple", parts: ["She ", {a:"doesn't",s:7}, " like spicy food at all, so choose the restaurant carefully."], hint: "This is a negative sentence. The subject is <em>she</em> — which contracted negative auxiliary do you need?", exp: "Use <strong>doesn't</strong> + infinitive for third-person singular negatives." },
+  { cat: "Present Simple", parts: ["The last bus ", {a:"leaves",s:6}, " at midnight, so don't stay too late."], hint: "Bus timetables are fixed schedules. Which tense do we use for schedules and timetables? Mind the third-person singular.", exp: "<strong>Present simple</strong> is used for timetabled or scheduled events." },
+  { cat: "Present Simple", parts: ["He ", {a:"doesn't",s:7}, " play any sport — he prefers reading or watching films."], hint: "Negative present simple, subject = <em>he</em>. Which auxiliary makes a negative with a third-person singular subject?", exp: "<strong>Doesn't</strong> + infinitive for third-person singular negatives." },
+  { cat: "Present Simple", parts: ["I always ", {a:"drink",s:5}, " coffee in the morning before I do anything else."], hint: "<em>Always</em> is a frequency adverb linked to habits and routines. Which tense and form with <em>I</em>?", exp: "<strong>Present simple</strong> is used for habits and routines, especially with <em>always, usually, never</em>." },
+  { cat: "Present Simple", parts: ["The Thames ", {a:"flows",s:5}, " through London before reaching the North Sea."], hint: "A geographical fact that never changes. Which tense? The subject is <em>The Thames</em> (third person singular).", exp: "<strong>Present simple</strong> describes permanent geographical or scientific facts." },
+
+  // PAST SIMPLE
+  { cat: "Past Simple", parts: ["We ", {a:"visited",s:7}, " Kraków last summer and absolutely loved every moment."], hint: "<em>Last summer</em> is a finished time in the past. Which tense do we use? This verb is regular.", exp: "<strong>Past simple</strong> describes a completed action at a definite past time." },
+  { cat: "Past Simple", parts: ["He ", {a:"didn't know",s:11}, " the answer, so he asked his colleague for help."], hint: "This is a negative past sentence. Which auxiliary + verb form creates a past negative?", exp: "Negative <strong>past simple</strong> uses <em>didn't</em> + infinitive (no -ed)." },
+  { cat: "Past Simple", parts: ["The meeting ", {a:"took",s:5}, " much longer than expected — nearly three hours in total."], hint: "A completed past action — but <em>take</em> is an irregular verb. What is its past simple form?", exp: "<strong>Took</strong> is the past simple of the irregular verb <em>take</em>." },
+  { cat: "Past Simple", parts: ["She ", {a:"wrote",s:5}, " her first novel when she was only twenty-two years old."], hint: "<em>Write</em> is irregular. Can you recall its past simple form? Think of something you might have done with a pen.", exp: "<strong>Wrote</strong> is the past simple of the irregular verb <em>write</em>." },
+  { cat: "Past Simple", parts: ["They ", {a:"didn't arrive",s:12}, " until after midnight, so dinner was already cold."], hint: "A negative past action. Use <em>didn't</em> + the base form of the verb — no -ed ending needed.", exp: "Negative <strong>past simple</strong>: <em>didn't</em> + base infinitive, no -ed." },
+  { cat: "Past Simple", parts: ["I ", {a:"saw",s:3}, " a great film last night — you should definitely watch it."], hint: "<em>See</em> is irregular. What is the past simple form — it's short, just three letters.", exp: "<strong>Saw</strong> is the past simple of the irregular verb <em>see</em>." },
+  { cat: "Past Simple", parts: ["Did you ", {a:"enjoy",s:6}, " the concert last weekend? I heard it was incredible."], hint: "<em>Did</em> is already there — so which form of the main verb follows it in a past simple question?", exp: "Past simple questions: <em>did</em> + subject + base infinitive (no -ed)." },
+
+  // PAST CONTINUOUS
+  { cat: "Past Continuous", parts: ["What ", {a:"were you doing",s:14}, " when the power went out yesterday evening?"], hint: "This asks about an action in progress at a past moment. Form the question with <em>were</em> + subject + verb-ing.", exp: "<strong>Past continuous</strong> describes an action in progress at a specific past moment." },
+  { cat: "Past Continuous", parts: ["While she ", {a:"was reading",s:11}, " the report, her phone rang three times."], hint: "<em>While</em> introduces a background action in progress. The subject is <em>she</em> — use <em>was/were</em> + verb-ing.", exp: "<strong>Past continuous</strong> after <em>while</em> shows the ongoing background action." },
+  { cat: "Past Continuous", parts: ["They ", {a:"were arguing",s:12}, " loudly when the manager suddenly walked into the room."], hint: "An ongoing action was interrupted by another event. The subject is <em>they</em> — which auxiliary + verb-ing fits?", exp: "<strong>Past continuous</strong> shows an action in progress when another occurred." },
+  { cat: "Past Continuous", parts: ["It ", {a:"was snowing",s:11}, " heavily when I left the office, so I took a taxi."], hint: "Weather as a background condition in the past. The subject is <em>it</em> — use <em>was</em> or <em>were</em> + verb-ing.", exp: "<strong>Past continuous</strong> describes the background situation when another event happened." },
+  { cat: "Past Continuous", parts: ["He ", {a:"was not listening",s:16}, " when the teacher explained the most important rule."], hint: "A negative past continuous — the subject is <em>he</em>. Use <em>was not</em> + verb-ing (you can also use the contraction).", exp: "Negative <strong>past continuous</strong>: <em>was/were not</em> + -ing." },
+  { cat: "Past Continuous", parts: ["We ", {a:"were waiting",s:11}, " for the bus when we bumped into an old friend."], hint: "An ongoing action that was happening when something else occurred. The subject is <em>we</em> — <em>was</em> or <em>were</em>?", exp: "<strong>Past continuous</strong> + <em>when</em> + past simple for background + interruption." },
+];
+
+let cur = 0, score = 0, results = new Array(questions.length).fill(null);
+
+function norm(s) { return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+function toggleHint() {
+  const hintEl = document.getElementById('q-hint');
+  const btnHint = document.getElementById('btn-hint');
+  const showing = hintEl.classList.contains('show');
+  hintEl.className = showing ? 'q-hint' : 'q-hint show';
+  btnHint.textContent = showing ? '💡 Show hint' : '🙈 Hide hint';
+}
+
+function buildDots() {
+  const el = document.getElementById('dots');
+  el.innerHTML = '';
+  questions.forEach((_,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.id = `dot-${i}`;
+    el.appendChild(d);
+  });
+}
+
+function updateDots() {
+  questions.forEach((_,i) => {
+    const d = document.getElementById(`dot-${i}`);
+    d.className = 'dot';
+    if (i === cur) d.classList.add('current');
+    else if (results[i] === true) d.classList.add('done-correct');
+    else if (results[i] === false) d.classList.add('done-wrong');
+    else if (results[i] === 'skipped') d.classList.add('done-skipped');
+  });
+}
+
+function render() {
+  const q = questions[cur];
+  const n = questions.length;
+
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-num').textContent = `Question ${cur+1} of ${n}`;
+
+  const qt = document.getElementById('q-text');
+  qt.innerHTML = '';
+  q.parts.forEach(p => {
+    if (typeof p === 'string') {
+      qt.appendChild(document.createTextNode(p));
+    } else {
+      const span = document.createElement('span');
+      span.className = 'gap';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.dataset.answer = p.a;
+      inp.style.width = (p.s * 11 + 16) + 'px';
+      inp.autocomplete = 'off';
+      inp.spellcheck = false;
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+      span.appendChild(inp);
+      qt.appendChild(span);
+      setTimeout(() => inp.focus(), 360);
+    }
+  });
+
+  const fb = document.getElementById('q-feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  const hintEl = document.getElementById('q-hint');
+  const btnHint = document.getElementById('btn-hint');
+  const hintWrap = document.getElementById('hint-wrap');
+  hintEl.className = 'q-hint';
+  hintEl.innerHTML = '';
+  if (q.hint) {
+    hintEl.innerHTML = q.hint;
+    btnHint.textContent = '💡 Show hint';
+    btnHint.className = 'btn-hint visible';
+    hintWrap.style.display = 'block';
+  } else {
+    btnHint.className = 'btn-hint';
+    hintWrap.style.display = 'none';
+  }
+
+  document.getElementById('btn-check').disabled = false;
+  document.getElementById('btn-next').className = 'btn btn-next show';
+  document.getElementById('btn-next').textContent = cur < questions.length - 1 ? 'Skip →' : 'See Results';
+
+  const pct = Math.round(cur / n * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = `Question ${cur+1} of ${n}`;
+
+  updateDots();
+}
+
+function checkAnswer() {
+  const q = questions[cur];
+  const inputs = document.querySelectorAll('#q-text input');
+  const fb = document.getElementById('q-feedback');
+  let allOk = true;
+
+  inputs.forEach(inp => {
+    const correct = norm(inp.dataset.answer);
+    const given = norm(inp.value);
+    let ok = given === correct;
+    if (correct === 'as if' && given === 'as though') ok = true;
+    inp.classList.add(ok ? 'correct' : 'wrong');
+    inp.disabled = true;
+    if (!ok) allOk = false;
+  });
+
+  results[cur] = allOk;
+  if (allOk) score++;
+
+  fb.className = 'feedback show ' + (allOk ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = allOk
+    ? '✓ Correct! ' + q.exp
+    : `✗ Not quite. <strong>Answer: ${inputs[0].dataset.answer}</strong> — ${q.exp}`;
+
+  document.getElementById('btn-check').disabled = true;
+  const bn = document.getElementById('btn-next');
+  bn.className = 'btn btn-next show';
+  bn.textContent = cur < questions.length - 1 ? 'Next →' : 'See Results';
+  updateDots();
+}
+
+function nextQuestion() {
+  // If unanswered, mark as skipped
+  if (results[cur] === null) results[cur] = 'skipped';
+  updateDots();
+  const card = document.getElementById('q-card');
+  card.classList.add('slide-out');
+  setTimeout(() => {
+    card.classList.remove('slide-out');
+    cur++;
+    if (cur >= questions.length) { showScore(); return; }
+    render();
+  }, 290);
+}
+
+function showScore() {
+  document.getElementById('card-wrap').style.display = 'none';
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  updateDots();
+
+  const n = questions.length;
+  const skipped = results.filter(r => r === 'skipped').length;
+  const answered = n - skipped;
+  const pct = answered > 0 ? Math.round(score / answered * 100) : 0;
+  const panel = document.getElementById('score-screen');
+  panel.style.display = 'block';
+  document.getElementById('score-num').innerHTML = `${score}<sub>/${answered}</sub>`;
+
+  let msg = skipped > 0 ? `You skipped ${skipped} question${skipped > 1 ? 's' : ''}. ` : '';
+  msg += pct === 100
+    ? 'Perfect score on answered questions! Brilliant, Darek. 🏆'
+    : pct >= 80 ? 'Excellent work! You have a strong command of these structures.'
+    : pct >= 60 ? 'Good effort! Review the tricky ones and try again.'
+    : "Keep practising — you'll get there. Try again below!";
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function resetQuiz() {
+  cur = 0; score = 0;
+  results = new Array(questions.length).fill(null);
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('card-wrap').style.display = 'block';
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('prog-pct').textContent = '0%';
+  render();
+}
+
+buildDots();
+render();
+</script>
+</body>
+</html>
